@@ -43,35 +43,26 @@
 					<button type="button" id="btn-drop-table" style="display:none">Elimina tabella</button>
 				</div>
 
-				<h3>Relate tables</h3>
+				<h3>Crea Relazione</h3>
 				<form id="relate-form">
 					<label>
-						Tabella sorgente
+						Tabella con campo referente
 						<select id="rel-src-table"></select>
 					</label>
 					<label>
-						Nome colonna (in sorgente)
-						<input id="rel-src-col" placeholder="fk_col" />
+						Campo referente
+						<select id="rel-src-col"></select>
 					</label>
 					<label>
-						Tipo
-						<select id="rel-type">
-							<option>INTEGER</option>
-							<option>TEXT</option>
-							<option>REAL</option>
-							<option>BLOB</option>
-						</select>
-					</label>
-					<label>
-						Tabella target
+						Tabella riferita
 						<select id="rel-target-table"></select>
 					</label>
 					<label>
-						Colonna target
+						Campo riferito (chiave)
 						<select id="rel-target-col"></select>
 					</label>
 					<div class="builder-actions">
-						<button type="button" id="btn-add-relation">Aggiungi relazione</button>
+						<button type="button" id="btn-add-relation">Crea Relazione</button>
 					</div>
 				</form>
 

@@ -1,4 +1,4 @@
-export function createTablesList({ container, logger, db, onEdit }) {
+export function createTablesList({ container, logger, db, onEdit, onChange } = {}) {
 	function render() {
 		const tables = db.listTables();
 		container.innerHTML = '';
@@ -30,7 +30,14 @@ export function createTablesList({ container, logger, db, onEdit }) {
 			btnDelete.onclick = () => {
 				if (!confirm(`Eliminare la tabella "${t.name}"?`)) return;
 				const r = db.dropTable(t.name);
-				if (r.ok) { logger.log(`Tabella "${t.name}" eliminata.`); render(); } else { logger.log(`Errore: ${r.error}`); }
+				if (r.ok) {
+					logger.log(`Tabella "${t.name}" eliminata.`);
+					render();
+					// notify caller that schema changed
+					if (typeof onChange === 'function') onChange();
+				} else {
+					logger.log(`Errore: ${r.error}`);
+				}
 			};
 
 			right.appendChild(btnShow);

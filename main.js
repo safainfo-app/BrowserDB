@@ -48,18 +48,19 @@ async function init() {
 	const relations = createRelations({
 		relSrcTable: els.relSrcTable,
 		relSrcCol: els.relSrcCol,
-		relType: els.relType,
 		relTargetTable: els.relTargetTable,
 		relTargetCol: els.relTargetCol,
 		btnAddRelation: els.btnAddRelation,
 		logger,
 		db: DB
 	});
+	// pass relations.refresh as onChange so tables-list notifies relations when drop happens
 	const tablesList = createTablesList({
 		container: els.tablesList,
 		logger,
 		db: DB,
-		onEdit: startEditingTable
+		onEdit: startEditingTable,
+		onChange: relations.refresh
 	});
 
 	// editing state
@@ -96,6 +97,8 @@ async function init() {
 			logger.log(`Tabella "${tableNameVal}" creata.`);
 			tableBuilder.reset();
 			tablesList.refresh();
+			// aggiorna selects relazioni
+			relations.refresh();
 		} else {
 			logger.log(`Errore: ${r.error}`);
 		}
@@ -107,6 +110,8 @@ async function init() {
 			if (!r.ok) { logger.log(`Errore aggiunta colonna: ${r.error}`); return; }
 		}
 		logger.log(`Aggiunte ${newColsDefs.length} colonne a "${originalTable}".`);
+		// aggiorna selects relazioni
+		relations.refresh();
 		stopEditing();
 	});
 
@@ -130,7 +135,7 @@ async function init() {
 	};
 
 	// new/import/export
-	els.btnNew.onclick = () => { DB.newDb(); tablesList.refresh(); logger.log('Nuovo DB creato.'); };
+	els.btnNew.onclick = () => { DB.newDb(); tablesList.refresh(); relations.refresh(); logger.log('Nuovo DB creato.'); };
 	els.btnExport.onclick = () => {
 		try {
 			const bin = DB.exportSqlite();
@@ -146,6 +151,7 @@ async function init() {
 			const ab = await Storage.readFileAsArrayBuffer(f);
 			DB.importSqlite(ab);
 			tablesList.refresh();
+			relations.refresh();
 			logger.log(`Database importato: ${f.name}`);
 		} catch (e) { logger.log('Errore import: ' + e.toString()); }
 		els.fileImport.value = '';

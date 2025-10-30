@@ -18,6 +18,8 @@ export async function initDb(env = {}) {
 export function newDb() {
 	if (!SQL) throw new Error("DB non inizializzato: chiama initDb()");
 	dbInstance = new SQL.Database();
+	// assicurarsi che le foreign key siano abilitate anche per nuovi DB
+	try { dbInstance.run('PRAGMA foreign_keys = ON;'); } catch (e) {}
 	return dbInstance;
 }
 
@@ -67,6 +69,12 @@ export function getTableInfo(tableName) {
 	}
 }
 
+// NEW: helper che restituisce solo i nomi delle colonne (compatibilità con moduli esistenti)
+export function getTableColumns(tableName) {
+	const info = getTableInfo(tableName);
+	return Array.isArray(info) ? info.map(col => col.name) : [];
+}
+
 // NEW: aggiunge una colonna (columnDef è la definizione completa, es. '"col" INTEGER DEFAULT 0')
 export function addColumn(tableName, columnDef) {
 	if (!dbInstance) throw new Error("DB non inizializzato");
@@ -104,5 +112,7 @@ export function importSqlite(arrayBuffer) {
 	if (!SQL) throw new Error("sql.js non inizializzato");
 	const u8 = new Uint8Array(arrayBuffer);
 	dbInstance = new SQL.Database(u8);
+	// riabilita enforcement FK dopo import
+	try { dbInstance.run('PRAGMA foreign_keys = ON;'); } catch (e) {}
 	return dbInstance;
 }
