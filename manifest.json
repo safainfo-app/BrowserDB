@@ -1,0 +1,8 @@
+{
+  "name": "BrowserDB",
+  "short_name": "BrowserDB",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Semplice database relazionale offline nel browser"
+}

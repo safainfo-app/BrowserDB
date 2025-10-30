@@ -1,0 +1,19 @@
+:root {
+  --gap: 16px;
+  --bg: #f7f7f9;
+  --accent: #2a7ae2;
+}
+html,body { height:100%; margin:0; font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:#111;}
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:white; box-shadow:0 1px 2px rgba(0,0,0,.05);}
+header h1 { margin:0; font-size:1.1rem;}
+.controls button { margin-left:8px; }
+main { display:flex; gap:var(--gap); padding:20px; }
+#left { width:320px; }
+#right { flex:1; }
+textarea, input { width:100%; box-sizing:border-box; padding:8px; border:1px solid #ddd; border-radius:6px; background:white; }
+button { background:var(--accent); color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+button.secondary { background:#666; }
+#tables-list { background:white; padding:8px; border-radius:6px; border:1px solid #eee; max-height:240px; overflow:auto; }
+.table-item { padding:6px 8px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; }
+pre#sql-output { background:#111; color:#dfe7ff; padding:12px; border-radius:6px; max-height:320px; overflow:auto; }
+footer { padding:12px 20px; font-size:0.85rem; color:#555; }

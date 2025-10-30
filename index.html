@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="it">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>BrowserDB — semplice DB offline</title>
+	<link rel="stylesheet" href="./styles.css" />
+	<link rel="manifest" href="./manifest.json" />
+</head>
+<body>
+	<header>
+		<h1>BrowserDB</h1>
+		<div class="controls">
+			<button id="btn-new-db">Nuovo DB</button>
+			<input id="file-import" type="file" accept=".sqlite" style="display:none" />
+			<button id="btn-import">Importa .sqlite</button>
+			<button id="btn-export">Esporta .sqlite</button>
+		</div>
+	</header>
+
+	<main>
+		<section id="left">
+			<h2>Schema</h2>
+			<div id="tables-list"></div>
+
+			<h3>Crea tabella</h3>
+			<form id="form-create-table">
+				<input id="table-name" placeholder="nome_tabella" required />
+				<textarea id="table-columns" placeholder="col1 TEXT, col2 INTEGER, fk_col INTEGER REFERENCES other(id)" rows="4"></textarea>
+				<button type="submit">Crea</button>
+			</form>
+		</section>
+
+		<section id="right">
+			<h2>Editor SQL</h2>
+			<textarea id="sql-editor" placeholder="SELECT name FROM sqlite_master;" rows="8"></textarea>
+			<div class="sql-actions">
+				<button id="btn-run-sql">Esegui SQL</button>
+				<button id="btn-clear-output">Pulisci</button>
+			</div>
+			<pre id="sql-output"></pre>
+		</section>
+	</main>
+
+	<footer>
+		<small>Funziona completamente nel browser. Offline grazie al service worker.</small>
+	</footer>
+
+	<!-- sql.js runtime from CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+	<script type="module" src="./main.js"></script>
+</body>
+</html>
