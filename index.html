@@ -5,7 +5,6 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
 	<title>BrowserDB — semplice DB offline</title>
 	<link rel="stylesheet" href="./styles.css" />
-	<link rel="manifest" href="./manifest.json" />
 </head>
 <body>
 	<header>
@@ -24,29 +23,68 @@
 			<div id="tables-list"></div>
 
 			<h3>Crea tabella</h3>
-			<form id="form-create-table">
-				<input id="table-name" placeholder="nome_tabella" required />
-				<textarea id="table-columns" placeholder="col1 TEXT, col2 INTEGER, fk_col INTEGER REFERENCES other(id)" rows="4"></textarea>
-				<button type="submit">Crea</button>
-			</form>
-		</section>
+			<form id="table-builder-form">
+				<label>
+					Nome tabella
+					<input id="table-name" placeholder="nome_tabella" required />
+				</label>
 
-		<section id="right">
-			<h2>Editor SQL</h2>
-			<textarea id="sql-editor" placeholder="SELECT name FROM sqlite_master;" rows="8"></textarea>
-			<div class="sql-actions">
-				<button id="btn-run-sql">Esegui SQL</button>
-				<button id="btn-clear-output">Pulisci</button>
-			</div>
-			<pre id="sql-output"></pre>
+				<div id="columns-list" aria-live="polite">
+					<!-- righe colonne (nome, tipo, PK) generate dinamicamente -->
+				</div>
+
+				<div class="builder-actions">
+					<button type="button" id="btn-add-column">+ Aggiungi colonna</button>
+					<button type="submit" id="btn-create-table">Crea tabella</button>
+
+					<!-- editing indicator & actions -->
+					<span id="edit-indicator" style="display:none">Editing: <strong id="editing-name"></strong></span>
+					<button type="button" id="btn-cancel-edit" style="display:none">Annulla modifica</button>
+					<button type="button" id="btn-drop-table" style="display:none">Elimina tabella</button>
+				</div>
+
+				<h3>Relate tables</h3>
+				<form id="relate-form">
+					<label>
+						Tabella sorgente
+						<select id="rel-src-table"></select>
+					</label>
+					<label>
+						Nome colonna (in sorgente)
+						<input id="rel-src-col" placeholder="fk_col" />
+					</label>
+					<label>
+						Tipo
+						<select id="rel-type">
+							<option>INTEGER</option>
+							<option>TEXT</option>
+							<option>REAL</option>
+							<option>BLOB</option>
+						</select>
+					</label>
+					<label>
+						Tabella target
+						<select id="rel-target-table"></select>
+					</label>
+					<label>
+						Colonna target
+						<select id="rel-target-col"></select>
+					</label>
+					<div class="builder-actions">
+						<button type="button" id="btn-add-relation">Aggiungi relazione</button>
+					</div>
+				</form>
+
+				<h4>Log</h4>
+				<pre id="sql-output" aria-live="polite"></pre>
+			</form>
 		</section>
 	</main>
 
 	<footer>
-		<small>Funziona completamente nel browser. Offline grazie al service worker.</small>
+		<small>Interfaccia grafica per creare e relazionare tabelle. Il DB in memoria viene perso al refresh a meno che non si esporti.</small>
 	</footer>
 
-	<!-- sql.js runtime from CDN -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 	<script type="module" src="./main.js"></script>
 </body>

@@ -10,6 +10,8 @@ export async function initDb(env = {}) {
 		...env
 	});
 	dbInstance = new SQL.Database();
+	// abilitare foreign key enforcement
+	try { dbInstance.run('PRAGMA foreign_keys = ON;'); } catch (e) {}
 	return dbInstance;
 }
 
@@ -45,6 +47,51 @@ export function listTables() {
 		for (let i = 0; i < cols.length; i++) obj[cols[i]] = r[i];
 		return obj;
 	});
+}
+
+// NEW: restituisce array di oggetti con informazioni di PRAGMA table_info
+export function getTableInfo(tableName) {
+	if (!dbInstance) throw new Error("DB non inizializzato");
+	try {
+		const res = dbInstance.exec(`PRAGMA table_info("${tableName}");`);
+		if (!res || res.length === 0) return [];
+		const info = res[0];
+		// info.columns contiene i nomi delle colonne della pragma, info.values contiene le righe
+		return info.values.map(row => {
+			const obj = {};
+			for (let i = 0; i < info.columns.length; i++) obj[info.columns[i]] = row[i];
+			return obj;
+		});
+	} catch (e) {
+		return [];
+	}
+}
+
+// NEW: aggiunge una colonna (columnDef è la definizione completa, es. '"col" INTEGER DEFAULT 0')
+export function addColumn(tableName, columnDef) {
+	if (!dbInstance) throw new Error("DB non inizializzato");
+	const stmt = `ALTER TABLE "${tableName}" ADD COLUMN ${columnDef}`;
+	return exec(stmt);
+}
+
+// NEW: drop table
+export function dropTable(tableName) {
+	if (!dbInstance) throw new Error("DB non inizializzato");
+	return exec(`DROP TABLE IF EXISTS "${tableName}";`);
+}
+
+// NEW: rename table
+export function renameTable(oldName, newName) {
+	if (!dbInstance) throw new Error("DB non inizializzato");
+	return exec(`ALTER TABLE "${oldName}" RENAME TO "${newName}";`);
+}
+
+// NEW: aggiunge una nuova colonna che referenzia una tabella esistente
+export function addForeignKeyColumn(sourceTable, columnName, type = 'INTEGER', targetTable, targetColumn) {
+	if (!dbInstance) throw new Error("DB non inizializzato");
+	// semplice statement: ALTER TABLE "source" ADD COLUMN "col" TYPE REFERENCES "target"("col");
+	const stmt = `ALTER TABLE "${sourceTable}" ADD COLUMN "${columnName}" ${type} REFERENCES "${targetTable}"("${targetColumn}")`;
+	return exec(stmt);
 }
 
 export function exportSqlite() {

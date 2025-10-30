@@ -1,19 +1,208 @@
 :root {
-  --gap: 16px;
-  --bg: #f7f7f9;
-  --accent: #2a7ae2;
+    --gap: 16px;
+    --bg: #f7f7f9;
+    --accent: #2a7ae2;
 }
-html,body { height:100%; margin:0; font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:#111;}
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:white; box-shadow:0 1px 2px rgba(0,0,0,.05);}
-header h1 { margin:0; font-size:1.1rem;}
-.controls button { margin-left:8px; }
-main { display:flex; gap:var(--gap); padding:20px; }
-#left { width:320px; }
-#right { flex:1; }
-textarea, input { width:100%; box-sizing:border-box; padding:8px; border:1px solid #ddd; border-radius:6px; background:white; }
-button { background:var(--accent); color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
-button.secondary { background:#666; }
-#tables-list { background:white; padding:8px; border-radius:6px; border:1px solid #eee; max-height:240px; overflow:auto; }
-.table-item { padding:6px 8px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; }
-pre#sql-output { background:#111; color:#dfe7ff; padding:12px; border-radius:6px; max-height:320px; overflow:auto; }
-footer { padding:12px 20px; font-size:0.85rem; color:#555; }
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial;
+    background: var(--bg);
+    color: #111;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.controls button {
+    margin-left: 8px;
+}
+
+main {
+    display: flex;
+    gap: var(--gap);
+    padding: 20px;
+    /* centrato e con max-width per evitare che tutto vada a sinistra */
+    max-width: 1100px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+#left {
+    width: 320px;
+}
+
+#right {
+    flex: 1;
+}
+
+textarea,
+input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+}
+
+button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button.secondary {
+    background: #666;
+}
+
+#tables-list {
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    max-height: 240px;
+    overflow: auto;
+}
+
+.table-item {
+    padding: 6px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* miglior spazio tra i pulsanti nella lista tabelle */
+.table-item > div:last-child > button {
+  margin-left: 6px;
+}
+
+/* editing indicator */
+#edit-indicator {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #ffeeba;
+  color: #6a4b00;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-size: 0.9rem;
+}
+
+/* cancel / drop buttons small adjustments */
+#btn-cancel-edit, #btn-drop-table {
+  background: #666;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+#btn-drop-table { background: #e04a4a; }
+
+pre#sql-output {
+    background: #111;
+    color: #dfe7ff;
+    padding: 12px;
+    border-radius: 6px;
+    max-height: 320px;
+    overflow: auto;
+}
+
+footer {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+#columns-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* allow scrolling if many columns or narrow container */
+  max-height: 320px;
+  overflow: auto;
+}
+
+/* singola riga colonna (adjusted for responsive behavior) */
+.column-row {
+  display: grid;
+  /* name | type | pk | remove */
+  grid-template-columns: 1fr 110px 44px 40px;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 8px;
+  border-radius: 6px;
+  min-width: 0; /* allow shrinking in flex/overflow contexts */
+}
+
+/* ensure children can shrink inside grid cells */
+.column-row > * { min-width: 0; }
+
+/* inputs inside column-row should size to their grid cell */
+.column-row input[type="text"],
+.column-row select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FK selects compact */
+.column-row .fk-table,
+.column-row .fk-col {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* make left column wider on desktop but responsive */
+#left {
+  width: 420px;
+  min-width: 260px;
+}
+
+/* responsive: stack left/right on narrow viewports to avoid cramped grid */
+@media (max-width: 900px) {
+  main {
+    flex-direction: column;
+  }
+  #left {
+    width: 100%;
+  }
+  /* stack controls vertically for each column row on small screens */
+  .column-row {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .column-row > * {
+    width: 100%;
+  }
+  .column-row .btn-remove-col {
+    justify-self: end;
+    width: auto;
+  }
+}
+
+/* small tweak: ensure builder-actions wrap if needed */
+.builder-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
